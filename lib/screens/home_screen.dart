@@ -1,8 +1,39 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeScreen extends StatelessWidget {
+import '../model/task.dart';
+
+class HomeScreen extends StatefulWidget {
   static const routeName = '/home-screen';
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  var _taskController;
+
+  void saveData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Task t = Task.fromString(_taskController.text);
+    prefs.setString('task', json.encode(t.getMap()));
+    _taskController.text = '';
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _taskController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _taskController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +80,7 @@ class HomeScreen extends StatelessWidget {
                 Divider(thickness: 1.2),
                 SizedBox(height: 20.0),
                 TextField(
+                  controller: _taskController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(5.0),
@@ -75,7 +107,7 @@ class HomeScreen extends StatelessWidget {
                             'RESET',
                             style: GoogleFonts.montserrat(),
                           ),
-                          onPressed: () => print('reset pressed'),
+                          onPressed: () => _taskController.text = '',
                         ),
                       ),
                       Container(
@@ -86,7 +118,7 @@ class HomeScreen extends StatelessWidget {
                             'ADD',
                             style: GoogleFonts.montserrat(),
                           ),
-                          onPressed: () => print('add pressed'),
+                          onPressed: () => saveData(),
                         ),
                       ),
                     ],
