@@ -15,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   var _taskController;
+  List<Task> _tasks;
 
   void saveData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -29,10 +30,24 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.of(context).pop();
   }
 
+  void _getTasks() async {
+    _tasks = [];
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String tasks = prefs.getString('task');
+    List list = (tasks == null) ? [] : json.decode(tasks);
+    for (dynamic d in list) {
+      _tasks.add(Task.fromMap(json.decode(d)));
+    }
+
+    print(_tasks);
+  }
+
   @override
   void initState() {
     super.initState();
     _taskController = TextEditingController();
+
+    _getTasks();
   }
 
   @override
