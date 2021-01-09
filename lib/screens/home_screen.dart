@@ -19,8 +19,14 @@ class _HomeScreenState extends State<HomeScreen> {
   void saveData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Task t = Task.fromString(_taskController.text);
-    prefs.setString('task', json.encode(t.getMap()));
+    String tasks = prefs.getString('task');
+    List list = (tasks == null) ? [] : json.decode(tasks);
+    print(list);
+    list.add(json.encode(t.getMap()));
+    print(list);
+    prefs.setString('task', json.encode(list));
     _taskController.text = '';
+    Navigator.of(context).pop();
   }
 
   @override
