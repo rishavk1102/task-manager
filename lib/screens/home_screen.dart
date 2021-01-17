@@ -65,9 +65,44 @@ class _HomeScreenState extends State<HomeScreen> {
           style: GoogleFonts.montserrat(),
         ),
       ),
-      body: Center(
-        child: Text('No Tasks added yet!'),
-      ),
+      body: (_tasks == null)
+          ? Center(
+              child: Text('No Tasks added yet!'),
+            )
+          : Column(
+              children: _tasks
+                  .map((e) => Container(
+                        height: 70.0,
+                        width: MediaQuery.of(context).size.width,
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 10.0,
+                          vertical: 5.0,
+                        ),
+                        padding: const EdgeInsets.only(left: 10.0),
+                        alignment: Alignment.centerLeft,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5.0),
+                          border: Border.all(
+                            color: Colors.black,
+                            width: 0.5,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              e.task,
+                              style: GoogleFonts.montserrat(),
+                            ),
+                            Checkbox(
+                              value: false,
+                              key: GlobalKey(),
+                            ),
+                          ],
+                        ),
+                      ))
+                  .toList(),
+            ),
       floatingActionButton: FloatingActionButton(
         child: Icon(
           Icons.add,
