@@ -29,6 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
     prefs.setString('task', json.encode(list));
     _taskController.text = '';
     Navigator.of(context).pop();
+
+    _getTasks();
   }
 
   void _getTasks() async {
@@ -86,6 +88,15 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: Icon(Icons.save),
             onPressed: updatePendingTasksList,
+          ),
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.setString('task', json.encode([]));
+
+              _getTasks();
+            },
           ),
         ],
       ),
