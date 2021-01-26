@@ -16,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   var _taskController;
   List<Task> _tasks;
+  List<bool> _tasksDone;
 
   void saveData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -40,6 +41,23 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     print(_tasks);
+
+    _tasksDone = List.generate(_tasks.length, (index) => false);
+    setState(() {});
+  }
+
+  void updatePendingTasksList() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<Task> pendingList = [];
+    for (var i = 0; i < _tasks.length; i++)
+      if (!_tasksDone[i]) pendingList.add(_tasks[i]);
+
+    var pendingListEncoded = List.generate(
+        pendingList.length, (i) => json.encode(pendingList[i].getMap()));
+
+    prefs.setString('task', json.encode(pendingListEncoded));
+
+    _getTasks();
   }
 
   @override
@@ -64,6 +82,12 @@ class _HomeScreenState extends State<HomeScreen> {
           'Task Manager',
           style: GoogleFonts.montserrat(),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.save),
+            onPressed: updatePendingTasksList,
+          ),
+        ],
       ),
       body: (_tasks == null)
           ? Center(
@@ -95,8 +119,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               style: GoogleFonts.montserrat(),
                             ),
                             Checkbox(
-                              value: false,
+                              value: _tasksDone[_tasks.indexOf(e)],
                               key: GlobalKey(),
+                              onChanged: (val) {
+                                setState(() {
+                                  _tasksDone[_tasks.indexOf(e)] = val;
+                                });
+                              },
                             ),
                           ],
                         ),
